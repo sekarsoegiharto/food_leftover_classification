@@ -1,0 +1,7 @@
+/__pycache__/
+images/
+references/
+references/vit_basic.ipynb
+/checkpoints
+/venv
+*.JPG
