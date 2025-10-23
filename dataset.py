@@ -20,7 +20,7 @@ class PairFoodDataset(Dataset):
             transforms.ToTensor(),
             transforms.Resize((img_size, img_size), antialias=True),
             transforms.RandomHorizontalFlip(),
-            transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.1),
+            transforms.ColorJitter(brightness=0.3, contrast=0.2, saturation=0.1),
             transforms.RandomAffine(degrees=10, translate=(0.05,0.05), scale=(0.95,1.05)),
             transforms.ConvertImageDtype(torch.float32),
             transforms.Normalize(mean=[0.485,0.456,0.406],
