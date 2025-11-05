@@ -64,3 +64,18 @@ for name, part in [('train',train_df), ('val',val_df), ('test',test_df)]:
     part[['before_path','after_path','label']].to_csv(os.path.join(OUT_DIR, f"{name}.csv"), index=False)
 
 print("Train:", len(train_df), "Val:", len(val_df), "Test:", len(test_df))
+
+warns = []
+def _per_class(df_part, name):
+    counts = df_part['label'].value_counts().sort_index()
+    print(f"\n{name} per class:")
+    for c, v in counts.items():
+        print(f"  class {int(c)}: {v}")
+    print("  total:", counts.sum())
+
+_per_class(train_df, "TRAIN")
+_per_class(val_df,   "VAL")
+_per_class(test_df,  "TEST")
+
+if warns:
+    print("\n".join(warns))

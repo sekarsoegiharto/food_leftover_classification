@@ -12,12 +12,22 @@ class SiameseMobileNetV2(nn.Module):
         # head memproses concat([f_after, |f_after - f_before|])
         in_dim = embed_dim*2
         self.classifier = nn.Sequential(
+        #     nn.Dropout(dropout),
+        #     nn.Linear(in_dim, 512),
+        #     nn.ReLU(inplace=True),
+        #     nn.Dropout(dropout),
+        #     nn.Linear(512, num_classes)
             nn.Dropout(dropout),
             nn.Linear(in_dim, 512),
             nn.ReLU(inplace=True),
+            nn.BatchNorm1d(512),
             nn.Dropout(dropout),
-            nn.Linear(512, num_classes)
+            nn.Linear(512, 128),
+            nn.ReLU(inplace=True),
+            nn.BatchNorm1d(128),
+            nn.Linear(128, num_classes)
         )
+        
 
     def forward_once(self, x):
         f = self.backbone(x)

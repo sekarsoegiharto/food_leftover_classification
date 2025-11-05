@@ -31,10 +31,16 @@ def predict(before_path, after_path, ckpt="checkpoints/best.pth"):
     with torch.no_grad():
         logits = model(b, a)
         prob = torch.softmax(logits, dim=1).cpu().numpy()[0]
-        pred = prob.argmax() + 1  # back to {1..7}
+        pred = prob.argmax()  
+        # pred = 7 - pred           # balik arah skala
+        pred += 1 # back to {1..7}
     return pred, prob
 
 if __name__ == "__main__":
-    pred, prob = predict(r"C:\Users\Sekar\Downloads\SKRIPSI\lefood\images\before\007_177_DSC_0213_bef.JPG",r"C:\Users\Sekar\Downloads\SKRIPSI\lefood\images\after\007_177_DSC_0246_aft.JPG")
+    pred, prob = predict(r"C:\Users\Sekar\Downloads\SKRIPSI\lefood\images\before\004_245_DSC_0949_bef.JPG",r"C:\Users\Sekar\Downloads\SKRIPSI\lefood\images\after\004_245_DSC_0978_aft.JPG")
+    print("Predicted leftover level:", pred)
+    print("Probs:", prob.round(3))
+
+    pred, prob = predict(r"C:\Users\Sekar\Downloads\SKRIPSI\lefood\images\before\001_001_DSC_0059_bef.JPG",r"C:\Users\Sekar\Downloads\SKRIPSI\lefood\images\after\001_001_DSC_0108_aft.JPG")
     print("Predicted leftover level:", pred)
     print("Probs:", prob.round(3))

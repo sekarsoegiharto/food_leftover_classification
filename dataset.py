@@ -16,17 +16,43 @@ class PairFoodDataset(Dataset):
                                  std =[0.229,0.224,0.225]),
         ])
         # Augment ringan (hanya untuk train)
+        # self.aug_tf = transforms.Compose([
+        #     transforms.ToTensor(),
+        #     transforms.Resize((img_size, img_size), antialias=True),
+        #     transforms.RandomHorizontalFlip(),
+        #     transforms.ColorJitter(brightness=0.3, contrast=0.2, saturation=0.1),
+        #     transforms.RandomAffine(degrees=10, translate=(0.05,0.05), scale=(0.95,1.05)),
+        #     transforms.ConvertImageDtype(torch.float32),
+        #     transforms.Normalize(mean=[0.485,0.456,0.406],
+        #                          std =[0.229,0.224,0.225]),
+        # ])
         self.aug_tf = transforms.Compose([
             transforms.ToTensor(),
             transforms.Resize((img_size, img_size), antialias=True),
-            transforms.RandomHorizontalFlip(),
-            transforms.ColorJitter(brightness=0.3, contrast=0.2, saturation=0.1),
-            transforms.RandomAffine(degrees=10, translate=(0.05,0.05), scale=(0.95,1.05)),
+            transforms.RandomApply([
+                transforms.ColorJitter(0.25, 0.15, 0.1, 0.05)
+            ], p=0.8),
+            transforms.RandomHorizontalFlip(p=0.5),
+            transforms.RandomAffine(
+                degrees=8,
+                translate=(0.03, 0.03),
+                scale=(0.97, 1.03),
+                shear=2
+            ),
             transforms.ConvertImageDtype(torch.float32),
-            transforms.Normalize(mean=[0.485,0.456,0.406],
-                                 std =[0.229,0.224,0.225]),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                std=[0.229, 0.224, 0.225]),
         ])
 
+        self.heavy_aug_tf = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Resize((img_size, img_size), antialias=True),
+            transforms.RandomHorizontalFlip(),
+            transforms.RandomRotation(15),
+            transforms.ColorJitter(brightness=0.4, contrast=0.3, saturation=0.2),
+            transforms.RandomAffine(degrees=10, translate=(0.1,0.1), scale=(0.9,1.1)),
+            transforms.Normalize(mean=[0.485,0.456,0.406], std=[0.229,0.224,0.225]),
+        ])
     def _read_img(self, path):
         img = cv2.imread(path, cv2.IMREAD_COLOR)
         if img is None:
@@ -38,11 +64,24 @@ class PairFoodDataset(Dataset):
 
     def __getitem__(self, idx):
         row = self.df.iloc[idx]
+
+        # Baca dua gambar
         im_before = self._read_img(row['before_path'])
         im_after  = self._read_img(row['after_path'])
+
+        # Default: augmentasi biasa (train) atau base (val/test)
         tf = self.aug_tf if self.augment else self.base_tf
+
+        # Jika augment=True dan label termasuk kelas minoritas → augmentasi lebih kuat
+        # if self.augment and int(row['label']) in [2, 3, 4, 5]:
+        #     tf = self.heavy_aug_tf
+
+        # Terapkan transformasi
         x_before = tf(im_before)
         x_after  = tf(im_after)
-        # label dari 1..7 -> 0..6
+
+        # Label dari 1..7 → 0..6
         y = int(row['label']) - 1
+
         return x_before, x_after, y
+

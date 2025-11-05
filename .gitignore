@@ -5,3 +5,10 @@ references/vit_basic.ipynb
 /checkpoints
 /venv
 *.JPG
+/cnn_predictions.csv
+/data_original.xlsx
+/gridsearch_results.csv
+/make_splits_les.py
+/train_old.py
+/train2.py
+
