@@ -57,7 +57,7 @@ df['before'] = df['before'].astype(str).str.strip() + ".jpg"
 df['after']  = df['after'].astype(str).str.strip() + ".jpg"
 
 # 5. Split dataset 70/15/15 (stratified by label)
-train_df, tmp = train_test_split(df, test_size=0.30, random_state=42, stratify=df['label'])
+train_df, tmp = train_test_split(df, test_size=0.20, random_state=42, stratify=df['label'])
 val_df, test_df = train_test_split(tmp, test_size=0.50, random_state=42, stratify=tmp['label'])
 
 for name, part in [('train',train_df), ('val',val_df), ('test',test_df)]:

@@ -18,7 +18,16 @@ class SiameseMobileNetV2(nn.Module):
         #     nn.Dropout(dropout),
         #     nn.Linear(512, num_classes)
             nn.Dropout(dropout),
-            nn.Linear(in_dim, 512),
+            nn.Linear(in_dim, 4096),
+            nn.ReLU(inplace=True),
+            nn.BatchNorm1d(4096),
+            nn.Dropout(dropout),
+            nn.Linear(4096, 2048),
+            nn.ReLU(inplace=True),
+            nn.BatchNorm1d(2048),
+            nn.Linear(2048, 1024),
+            nn.Dropout(dropout),
+            nn.Linear(1024, 512),
             nn.ReLU(inplace=True),
             nn.BatchNorm1d(512),
             nn.Dropout(dropout),
@@ -28,7 +37,6 @@ class SiameseMobileNetV2(nn.Module):
             nn.Linear(128, num_classes)
         )
         
-
     def forward_once(self, x):
         f = self.backbone(x)
         f = self.pool(f).flatten(1)
@@ -40,3 +48,5 @@ class SiameseMobileNetV2(nn.Module):
         feat = torch.cat([f_a, torch.abs(f_a - f_b)], dim=1)
         logits = self.classifier(feat)
         return logits
+
+# data diitung pake weight, kita pakai observer untuk label karena hal tersebut ada nya kemungkinan data inkonsisten karena pengambilan data bersifat subjektif

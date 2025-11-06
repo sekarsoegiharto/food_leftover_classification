@@ -51,7 +51,7 @@ def train_and_validate(lr=1e-4, batch_size=16, weight_decay=1e-5, optimizer_type
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10)
 
     # Training singkat per kombinasi
-    EPOCHS = 10
+    EPOCHS = 1000
     best_val_acc = 0.0
     best_metrics = {}
     
